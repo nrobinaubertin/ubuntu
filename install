@@ -1,0 +1,31 @@
+#!/bin/sh
+
+if [ $(id -u) != "0" ]; then
+  echo "You need to launch this script as root"
+  exit 1
+fi
+
+apt update
+apt install -y <<EOF
+git
+build-essential
+cargo
+syncthing-gtk
+qutebrowser
+yarnpkg
+nodejs
+fd-find
+ripgrep
+python3-pynvim
+curl
+flake8
+clang clang-tools clang-tidy
+pylint
+EOF
+
+snap install keepassxc
+snap install signal-desktop
+snap install gimp
+
+curl -sL https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o /usr/local/bin/nvim
+chmod +x /usr/local/bin/nvim
