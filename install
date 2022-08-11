@@ -5,30 +5,45 @@ if [ $(id -u) != "0" ]; then
   exit 1
 fi
 
+# apt packages
 apt update
 apt install -y <<EOF
 build-essential
 cargo
-clang clang-tools clang-tidy
+clang
+clang-tidy
+clang-tools
 curl
 fd-find
+ffmpeg
 flake8
+fuse
 git
+mpv
 nodejs
+npm
+patchelf
 pylint
+python3-pip
 python3-pylsp
 python3-pynvim
+python3-venv
 qutebrowser
 ripgrep
 syncthing-gtk
+universal-ctags
+wl-clipboard
 yarnpkg
 EOF
 
+# snaps
 cat <<EOF | xargs -n1 snap install
 gimp
 keepassxc
+libreoffice
 signal-desktop
 EOF
 
+# appimages
 curl -sL https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o /usr/local/bin/nvim
 chmod +x /usr/local/bin/nvim
