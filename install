@@ -1,49 +1,74 @@
 #!/bin/sh
 
+set -xe
+
 if [ $(id -u) != "0" ]; then
   echo "You need to launch this script as root"
   exit 1
 fi
 
 # apt packages
-apt update
-apt install -y <<EOF
-build-essential
-cargo
-clang
-clang-tidy
-clang-tools
-curl
-fd-find
-ffmpeg
-flake8
-fuse
-git
-mpv
-nodejs
-npm
-patchelf
-pylint
-python3-pip
-python3-pylsp
-python3-pynvim
-python3-venv
-qutebrowser
-ripgrep
-syncthing-gtk
-universal-ctags
-wl-clipboard
-yarnpkg
-EOF
+apt-get update
+apt-get install -y \
+  acpi \
+  build-essential \
+  cargo \
+  clang \
+  clang-tidy \
+  clang-tools \
+  curl \
+  exfat-fuse \
+  fd-find \
+  ffmpeg \
+  flake8 \
+  fuse \
+  git \
+  keepassxc \
+  mpv \
+  nodejs \
+  npm \
+  patchelf \
+  pylint \
+  python3-pip \
+  python3-pylsp \
+  python3-pynvim \
+  python3-venv \
+  ripgrep \
+  universal-ctags \
+  wl-clipboard \
+  yarnpkg
+
+# packages under evaluation
+# sway swaylock
+# kitty
+# dmenu
+# xwayland
+# network-manager
+# libwayland-egl1
 
 # snaps
 cat <<EOF | xargs -n1 snap install
+firefox
 gimp
-keepassxc
 libreoffice
 signal-desktop
 EOF
 
 # appimages
-curl -sL https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o /usr/local/bin/nvim
+curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage --create-dirs -o /usr/local/bin/nvim
 chmod +x /usr/local/bin/nvim
+
+# docker (https://docs.docker.com/engine/install/ubuntu)
+# the snap doesn't work for me (snap.docker.dockerd cannot start because of missing graphdriver)
+apt-get install -y \
+  ca-certificates \
+  curl \
+  gnupg \
+  lsb-release
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
