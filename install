@@ -1,6 +1,8 @@
 #!/bin/sh
 
-set -xe
+# Used on 22.04.1 LTS (Jammy Jellyfish)
+
+set -x
 
 if [ $(id -u) != "0" ]; then
   echo "You need to launch this script as root"
