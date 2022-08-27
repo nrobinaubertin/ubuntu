@@ -1,11 +1,17 @@
 #!/bin/sh
 
 # Used on 22.04.1 LTS (Jammy Jellyfish)
+# Meant to be used with a sudoed user (it will setup things globally and for the user)
 
 set -x
 
-if [ $(id -u) != "0" ]; then
-  echo "You need to launch this script as root"
+if [ "$(id -u)" != "0" ]; then
+  echo "You need to launch this script with sudo"
+  exit 1
+fi
+
+if [ "$(id -u -n)" == "$(logname)" ]; then
+  echo "You need to launch this script with sudo and not as root"
   exit 1
 fi
 
@@ -14,10 +20,11 @@ apt-get update
 apt-get install -y \
   acpi \
   build-essential \
-  cargo \
+  bzip2 \
   clang \
   clang-tidy \
   clang-tools \
+  cppcheck \
   curl \
   exfat-fuse \
   fd-find \
@@ -25,19 +32,32 @@ apt-get install -y \
   flake8 \
   fuse \
   git \
+  jq \
   keepassxc \
+  lftp \
+  lua-check \
+  mariadb-client \
   mpv \
+  net-tools \
   nodejs \
   npm \
   patchelf \
-  pylint \
+  php \
+  php-codesniffer \
   python3-pip \
-  python3-pylsp \
-  python3-pynvim \
   python3-venv \
   ripgrep \
+  rsync \
+  shellcheck \
+  socat \
+  sockstat \
+  sqlite3 \
+  sysstat \
   universal-ctags \
+  unzip \
+  vim \
   wl-clipboard \
+  yamllint \
   yarnpkg
 
 # packages under evaluation
@@ -56,9 +76,60 @@ libreoffice
 signal-desktop
 EOF
 
-# appimages
+# pip
+cat <<EOF | xargs -i su $(logname) sh -c 'pip install --user {}'
+ansible-lint
+black
+flake8
+gita
+mypy
+pylint
+pynvim
+python-lsp-server[all]
+ranger-fm
+yt-dlp
+EOF
+
+# npm
+su $(logname) sh -c 'npm config set prefix ~/.local'
+cat <<EOF | xargs -i su $(logname) sh -c 'npm install --force -g {}'
+eslint
+markdownlint-cli
+pyright
+EOF
+
+# rustup
+su $(logname) sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
+
+# cargo
+cat <<EOF | xargs -i su $(logname) sh -c '~/.cargo/bin/cargo install {}'
+bandwhich
+bat
+du-dust
+exa
+fd-find
+git-delta
+ripgrep
+tokei
+xsv
+EOF
+
+# neovim
 curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage --create-dirs -o /usr/local/bin/nvim
 chmod +x /usr/local/bin/nvim
+
+# yt-dlp
+curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o "/usr/local/bin/yt-dlp"
+chmod +x /usr/local/bin/yt-dlp
+
+# restic
+version="$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/restic/restic/releases/latest | rev | cut -d'/' -f1 | rev)"
+curl -L "https://github.com/restic/restic/releases/download/$version/restic_$(echo $version | cut -c 2-)_linux_amd64.bz2" -o /usr/local/bin/restic.bz2
+bunzip2 -f /usr/local/bin/restic.bz2
+chmod +x /usr/local/bin/restic
+
+# rclone
+# age
 
 # docker (https://docs.docker.com/engine/install/ubuntu)
 # the snap doesn't work for me (snap.docker.dockerd cannot start because of missing graphdriver)
@@ -68,7 +139,7 @@ apt-get install -y \
   gnupg \
   lsb-release
 mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
