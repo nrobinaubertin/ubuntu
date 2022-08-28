@@ -10,7 +10,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-if [ "$(id -u -n)" == "$(logname)" ]; then
+if [ "$(id -u -n)" = "$(logname)" ]; then
   echo "You need to launch this script with sudo and not as root"
   exit 1
 fi
@@ -46,6 +46,8 @@ apt-get install -y \
   php-codesniffer \
   python3-pip \
   python3-venv \
+  rclone \
+  restic \
   ripgrep \
   rsync \
   shellcheck \
@@ -77,7 +79,7 @@ signal-desktop
 EOF
 
 # pip
-cat <<EOF | xargs -i su $(logname) sh -c 'pip install --user {}'
+cat <<EOF | xargs -I{} su "$(logname)" sh -c 'pip install --user {}'
 ansible-lint
 black
 flake8
@@ -91,18 +93,18 @@ yt-dlp
 EOF
 
 # npm
-su $(logname) sh -c 'npm config set prefix ~/.local'
-cat <<EOF | xargs -i su $(logname) sh -c 'npm install --force -g {}'
+su "$(logname)" sh -c 'npm config set prefix ~/.local'
+cat <<EOF | xargs -I{} su "$(logname)" sh -c 'npm install --force -g {}'
 eslint
 markdownlint-cli
 pyright
 EOF
 
 # rustup
-su $(logname) sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
+su "$(logname)" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
 
 # cargo
-cat <<EOF | xargs -i su $(logname) sh -c '~/.cargo/bin/cargo install {}'
+cat <<EOF | xargs -I{} su "$(logname)" sh -c '~/.cargo/bin/cargo install {}'
 bandwhich
 bat
 du-dust
@@ -122,12 +124,6 @@ chmod +x /usr/local/bin/nvim
 curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o "/usr/local/bin/yt-dlp"
 chmod +x /usr/local/bin/yt-dlp
 
-# restic
-version="$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/restic/restic/releases/latest | rev | cut -d'/' -f1 | rev)"
-curl -L "https://github.com/restic/restic/releases/download/$version/restic_$(echo $version | cut -c 2-)_linux_amd64.bz2" -o /usr/local/bin/restic.bz2
-bunzip2 -f /usr/local/bin/restic.bz2
-chmod +x /usr/local/bin/restic
-
 # rclone
 # age
 
@@ -145,3 +141,18 @@ echo \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# mSBC for sony wh-1000xm4
+# https://www.redpill-linpro.com/techblog/2021/05/31/better-bluetooth-headset-audio-with-msbc.html
+mkdir -p /etc/pipewire/media-session.d
+echo "properties = {bluez5.msbc-support = true}" > /etc/pipewire/media-session.d/bluez-monitor.conf
+# systemctl restart pipewire
+
+# amdgpu
+# https://github.com/RadeonOpenCompute/ROCm/issues/1730
+# https://amdgpu-install.readthedocs.io/en/latest/install-prereq.html
+curl -L "https://repo.radeon.com/amdgpu-install/22.20/ubuntu/jammy/amdgpu-install_22.20.50200-1_all.deb" -o /tmp/amdgpu-install.deb
+apt-get install -y "/tmp/amdgpu-install.deb"
+rm -rf "/tmp/amdgpu-install.deb"
+# https://askubuntu.com/a/1424178/1624582
+amdgpu-install --usecase=opencl,graphics -y
