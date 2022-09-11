@@ -98,6 +98,8 @@ cat <<EOF | xargs -I{} su "$(logname)" sh -c 'npm install --force -g {}'
 eslint
 markdownlint-cli
 pyright
+typescript
+typescript-language-server
 EOF
 
 # rustup
