@@ -78,6 +78,16 @@ libreoffice
 signal-desktop
 EOF
 
+# microk8s
+cat <<EOF | xargs -n1 snap install --classic
+microk8s
+EOF
+mkdir -p ~/.kube
+usermod -a -G microk8s "$(id -nu)"
+chown -f -R niels ~/.kube
+newgrp microk8s
+microk8s enable dns:9.9.9.9 hostpath-storage ingress
+
 # pip
 cat <<EOF | xargs -I{} su "$(logname)" sh -c 'pip install --user {}'
 ansible-lint
@@ -158,3 +168,7 @@ apt-get install -y "/tmp/amdgpu-install.deb"
 rm -rf "/tmp/amdgpu-install.deb"
 # https://askubuntu.com/a/1424178/1624582
 amdgpu-install --usecase=opencl,graphics -y
+
+# handle touchpad issues when awakening from S3 sleep
+# https://askubuntu.com/questions/1235067/touchpad-stopped-working-20-04
+echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
