@@ -60,6 +60,7 @@ apt-get install -y \
   universal-ctags \
   unzip \
   vim \
+  w3m \
   wl-clipboard \
   yamllint \
   yarnpkg \
