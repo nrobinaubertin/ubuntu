@@ -28,6 +28,7 @@ apt-get install -y \
   curl \
   exfat-fuse \
   fd-find \
+  feh \
   ffmpeg \
   flake8 \
   fuse \
@@ -60,7 +61,8 @@ apt-get install -y \
   vim \
   wl-clipboard \
   yamllint \
-  yarnpkg
+  yarnpkg \
+  zathura
 
 # packages under evaluation
 # sway swaylock
@@ -85,7 +87,6 @@ EOF
 mkdir -p ~/.kube
 usermod -a -G microk8s "$(id -nu)"
 chown -f -R niels ~/.kube
-newgrp microk8s
 microk8s enable dns:9.9.9.9 hostpath-storage ingress
 
 # pip
@@ -136,8 +137,8 @@ chmod +x /usr/local/bin/nvim
 curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o "/usr/local/bin/yt-dlp"
 chmod +x /usr/local/bin/yt-dlp
 
-# rclone
 # age
+# syncthing
 
 # docker (https://docs.docker.com/engine/install/ubuntu)
 # the snap doesn't work for me (snap.docker.dockerd cannot start because of missing graphdriver)
@@ -172,3 +173,12 @@ amdgpu-install --usecase=opencl,graphics -y
 # handle touchpad issues when awakening from S3 sleep
 # https://askubuntu.com/questions/1235067/touchpad-stopped-working-20-04
 echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
+
+# aerc
+apt install -y golang scdoc
+mkdir -p /tmp/aerc
+cd /tmp/aerc || exit
+curl -Ls https://git.sr.ht/~rjarry/aerc/archive/0.12.0.tar.gz | tar xz --strip 1
+make
+make install
+rm -rf /tmp/aerc
