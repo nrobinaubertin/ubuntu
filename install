@@ -55,6 +55,7 @@ apt-get install -y \
   socat \
   sockstat \
   sqlite3 \
+  syncthing \
   sysstat \
   universal-ctags \
   unzip \
