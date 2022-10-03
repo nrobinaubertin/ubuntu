@@ -31,7 +31,6 @@ apt-get install -y \
   feh \
   ffmpeg \
   flake8 \
-  fuse \
   git \
   jq \
   keepassxc \
