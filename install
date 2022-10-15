@@ -56,8 +56,10 @@ apt-get install -y \
   sqlite3 \
   syncthing \
   sysstat \
+  tmux \
   universal-ctags \
   unzip \
+  urlscan \
   vim \
   w3m \
   wl-clipboard \
@@ -172,7 +174,8 @@ rm -rf "/tmp/amdgpu-install.deb"
 # https://askubuntu.com/a/1424178/1624582
 amdgpu-install --usecase=opencl,graphics -y
 
-# handle touchpad issues when awakening from S3 sleep
+# handle trackpad issues when awakening from S3 sleep
+# (I don't use the touchpad)
 # https://askubuntu.com/questions/1235067/touchpad-stopped-working-20-04
 echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
 
