@@ -15,6 +15,8 @@ if [ "$(id -u -n)" = "$(logname)" ]; then
   exit 1
 fi
 
+USERNAME="$(logname)"
+
 # apt packages
 apt-get update
 apt-get install -y \
@@ -85,16 +87,15 @@ signal-desktop
 EOF
 
 # microk8s
-cat <<EOF | xargs -n1 snap install --classic
-microk8s
-EOF
-mkdir -p ~/.kube
-usermod -a -G microk8s "$(id -nu)"
-chown -f -R niels ~/.kube
+snap install --classic microk8s
+mkdir -p "/home/$USERNAME/.kube"
+usermod -a -G microk8s "$USERNAME"
+chown -f -R "$USERNAME" "/home/$USERNAME/.kube"
 microk8s enable dns:9.9.9.9 hostpath-storage ingress
+snap alias microk8s.kubectl kubectl
 
 # pip
-cat <<EOF | xargs -I{} su "$(logname)" sh -c 'pip install --user {}'
+cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user {}'
 ansible-lint
 black
 flake8
@@ -108,8 +109,9 @@ yt-dlp
 EOF
 
 # npm
-su "$(logname)" sh -c 'npm config set prefix ~/.local'
-cat <<EOF | xargs -I{} su "$(logname)" sh -c 'npm install --force -g {}'
+su "$USERNAME" sh -c 'npm config set prefix ~/.local'
+cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'npm install --force -g {}'
+dockerfile-language-server-nodejs
 eslint
 markdownlint-cli
 pyright
@@ -118,10 +120,10 @@ typescript-language-server
 EOF
 
 # rustup
-su "$(logname)" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
+su "$USERNAME" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
 
 # cargo
-cat <<EOF | xargs -I{} su "$(logname)" sh -c '~/.cargo/bin/cargo install {}'
+cat <<EOF | xargs -I{} su "$USERNAME" sh -c '~/.cargo/bin/cargo install {}'
 bandwhich
 bat
 du-dust
