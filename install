@@ -80,6 +80,7 @@ apt-get install -y \
 
 # snaps
 cat <<EOF | xargs -n1 snap install
+chromium
 firefox
 gimp
 libreoffice
