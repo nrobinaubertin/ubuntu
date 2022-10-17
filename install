@@ -121,6 +121,7 @@ markdownlint-cli
 pyright
 typescript
 typescript-language-server
+yaml-language-server
 EOF
 
 # rustup
