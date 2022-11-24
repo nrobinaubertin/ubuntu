@@ -56,19 +56,22 @@ apt-get install -y \
   socat \
   sockstat \
   sqlite3 \
+  sshuttle \
   syncthing \
   sysstat \
   tmux \
+  tree \
   universal-ctags \
   unzip \
   urlscan \
   vim \
   w3m \
   wl-clipboard \
+  xdg-desktop-portal-dev \
+  xdg-desktop-portal-gnome \
   xdg-desktop-portal-gtk \
   yamllint \
-  yarnpkg \
-  zathura
+  yarnpkg
 
 # packages under evaluation
 # sway swaylock
