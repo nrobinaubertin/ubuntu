@@ -192,7 +192,7 @@ echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
 apt install -y golang scdoc
 mkdir -p /tmp/aerc
 cd /tmp/aerc || exit
-curl -Ls https://git.sr.ht/~rjarry/aerc/archive/0.12.0.tar.gz | tar xz --strip 1
+curl -Ls https://git.sr.ht/~rjarry/aerc/archive/0.13.0.tar.gz | tar xz --strip 1
 make
 make install
 rm -rf /tmp/aerc
