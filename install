@@ -162,8 +162,11 @@ chmod +x /usr/local/bin/nvim
 curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o "/usr/local/bin/yt-dlp"
 chmod +x /usr/local/bin/yt-dlp
 
-# age
 # helix
+curl -Ls https://github.com/helix-editor/helix/releases/download/22.08.1/helix-22.08.1-x86_64.AppImage -o /usr/local/bin/hx
+chmod +x /usr/local/bin/hx
+
+# age
 
 # mSBC for sony wh-1000xm4
 # https://www.redpill-linpro.com/techblog/2021/05/31/better-bluetooth-headset-audio-with-msbc.html
