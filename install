@@ -93,6 +93,17 @@ EOF
 # docker
 snap install docker
 
+# check if the snap partition is using zfs, change the storage-driver accordingly
+if df -hT | awk '/\/var\/snap/ {print $2}' | grep zfs >/dev/null
+then
+cat <<EOF > /var/snap/docker/current/config/daemon.json
+{
+  "storage-driver": "zfs",
+  "log-level": "error"
+}
+EOF
+fi
+
 # microk8s
 snap install --classic microk8s
 mkdir -p "/home/$USERNAME/.kube"
