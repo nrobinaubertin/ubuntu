@@ -15,6 +15,16 @@ if [ "$(id -u -n)" = "$(logname)" ]; then
   exit 1
 fi
 
+if ! [ -r /etc/os-release ]; then
+    echo "/etc/os-release file cannot be read"
+    exit 1
+fi
+
+if ! grep 'ID=ubuntu' /etc/os-release >/dev/null; then
+  echo "This script is meant to be executed on Ubuntu"
+  exit 1
+fi
+
 USERNAME="$(logname)"
 
 # apt packages
