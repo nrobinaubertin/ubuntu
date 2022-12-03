@@ -122,7 +122,6 @@ snap install --classic microk8s
 mkdir -p "/home/$USERNAME/.kube"
 usermod -a -G microk8s "$USERNAME"
 chown -f -R "$USERNAME" "/home/$USERNAME/.kube"
-microk8s enable dns:9.9.9.9 hostpath-storage ingress
 snap alias microk8s.kubectl kubectl
 
 # pip
