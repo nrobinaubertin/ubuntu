@@ -100,6 +100,9 @@ libreoffice
 signal-desktop
 EOF
 
+# lxd
+snap install lxd
+
 # docker
 snap install docker
 
