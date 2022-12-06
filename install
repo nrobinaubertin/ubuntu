@@ -170,10 +170,6 @@ EOF
 curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage --create-dirs -o /usr/local/bin/nvim
 chmod +x /usr/local/bin/nvim
 
-# yt-dlp
-curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o "/usr/local/bin/yt-dlp"
-chmod +x /usr/local/bin/yt-dlp
-
 # age
 
 # mSBC for sony wh-1000xm4
