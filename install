@@ -43,6 +43,7 @@ apt-get install -y \
   feh \
   ffmpeg \
   flake8 \
+  flatpak \
   git \
   jq \
   keepassxc \
@@ -90,6 +91,9 @@ apt-get install -y \
 # xwayland
 # network-manager
 # libwayland-egl1
+
+# enable flathub
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # snaps
 cat <<EOF | xargs -n1 snap install
