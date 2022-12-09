@@ -207,6 +207,7 @@ rm -rf /tmp/aerc
 
 # Remove software that I don't want
 apt-get purge -y \
-  seahorse
+  seahorse \
+  yelp
 apt-get autoremove -y
 sudo snap remove snap-store
