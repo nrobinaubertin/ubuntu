@@ -235,4 +235,4 @@ apt-get purge -y \
   seahorse \
   yelp
 apt-get autoremove -y
-sudo snap remove snap-store
+sudo snap remove snap-store || true
