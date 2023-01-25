@@ -27,9 +27,15 @@ fi
 
 if [ "$1" = "--update" ]; then
   apt-get update
-  apt-get upgrade
-  snap refresh
-  flatpak update -y
+  apt-get upgrade -y
+
+  if command -v snap >/dev/null; then
+    snap refresh
+  fi
+
+  if command -v flatpak >/dev/null; then
+    flatpak update -y
+  fi
 fi
 
 USERNAME="$(logname)"
