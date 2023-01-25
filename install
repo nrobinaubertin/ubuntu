@@ -137,6 +137,11 @@ cat <<EOF > /var/snap/docker/current/config/daemon.json
 EOF
 fi
 
+# lxd
+snap install lxd
+
+# bad interaction between lxd and docker snaps needs the following workaround:
+iptables-legacy -I DOCKER-USER -j ACCEPT
 # microk8s
 snap install --classic microk8s
 mkdir -p "/home/$USERNAME/.kube"
