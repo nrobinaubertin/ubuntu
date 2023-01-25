@@ -142,6 +142,10 @@ snap install lxd
 
 # bad interaction between lxd and docker snaps needs the following workaround:
 iptables-legacy -I DOCKER-USER -j ACCEPT
+
+# juju
+snap install --classic juju
+
 # microk8s
 snap install --classic microk8s
 mkdir -p "/home/$USERNAME/.kube"
