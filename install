@@ -45,6 +45,7 @@ apt-get install -y \
   clang-tools \
   cppcheck \
   curl \
+  deluge \
   exfat-fuse \
   fd-find \
   feh \
