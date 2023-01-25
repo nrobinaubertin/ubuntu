@@ -105,11 +105,15 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 
 # snaps
 cat <<EOF | xargs -n1 snap install
+brave
 chromium
 firefox
 gimp
 libreoffice
+mattermost-desktop
+mgba
 signal-desktop
+vlc
 EOF
 
 # lxd
