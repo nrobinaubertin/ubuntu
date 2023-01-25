@@ -25,6 +25,13 @@ if ! grep 'ID=ubuntu' /etc/os-release >/dev/null; then
   exit 1
 fi
 
+if [ "$1" = "--update" ]; then
+  apt-get update
+  apt-get upgrade
+  snap refresh
+  flatpak update -y
+fi
+
 USERNAME="$(logname)"
 
 # apt packages
