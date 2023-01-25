@@ -121,6 +121,10 @@ snap install lxd
 
 # docker
 snap install docker
+addgroup --system docker
+adduser "$USERNAME" docker
+snap disable docker
+snap enable docker
 
 # check if the snap partition is using zfs, change the storage-driver accordingly
 if df -hT | awk '/\/var\/snap/ {print $2}' | grep zfs >/dev/null
