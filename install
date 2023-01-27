@@ -242,3 +242,6 @@ apt-get purge -y \
   yelp
 apt-get autoremove -y
 sudo snap remove snap-store || true
+
+# user settings
+su "$USERNAME" sh -c 'gsettings set com.ubuntu.update-notifier no-show-notifications true'
