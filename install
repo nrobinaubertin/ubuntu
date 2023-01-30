@@ -52,6 +52,7 @@ apt-get install -y \
   cppcheck \
   curl \
   deluge \
+  dmenu \
   exfat-fuse \
   fd-find \
   feh \
@@ -61,11 +62,13 @@ apt-get install -y \
   git \
   jq \
   keepassxc \
+  kitty \
   lftp \
   lua-check \
   mariadb-client \
   mpv \
   net-tools \
+  network-manager \
   nodejs \
   npm \
   patchelf \
@@ -82,6 +85,8 @@ apt-get install -y \
   sockstat \
   sqlite3 \
   sshuttle \
+  sway \
+  swaylock \
   syncthing \
   sysstat \
   tmux \
@@ -95,15 +100,11 @@ apt-get install -y \
   xdg-desktop-portal-dev \
   xdg-desktop-portal-gnome \
   xdg-desktop-portal-gtk \
+  xwayland \
   yamllint \
   yarnpkg
 
 # packages under evaluation
-# sway swaylock
-# kitty
-# dmenu
-# xwayland
-# network-manager
 # libwayland-egl1
 
 # enable flathub
@@ -238,6 +239,7 @@ rm -rf /tmp/aerc
 
 # Remove software that I don't want
 apt-get purge -y \
+  gnome-keyring \
   seahorse \
   yelp
 apt-get autoremove -y
