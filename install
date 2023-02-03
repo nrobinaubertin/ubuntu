@@ -163,13 +163,18 @@ snap alias microk8s.kubectl kubectl
 # pip
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user {}'
 ansible-lint
+pipx
+pynvim
+python-lsp-server[all]
+EOF
+
+# pipx
+cat <<EOF | xargs -n1 -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force {}'
 black
 flake8
 gita
 mypy
 pylint
-pynvim
-python-lsp-server[all]
 ranger-fm
 yt-dlp
 EOF
