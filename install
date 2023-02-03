@@ -173,9 +173,10 @@ cat <<EOF | xargs -n1 -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force
 black
 flake8
 gita
-mypy
 pylint
+pyproject-flake8
 ranger-fm
+tox
 yt-dlp
 EOF
 
