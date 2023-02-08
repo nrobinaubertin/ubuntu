@@ -74,6 +74,7 @@ apt-get install -y \
   patchelf \
   php \
   php-codesniffer \
+  prettyping \
   python3-pip \
   python3-venv \
   rclone \
