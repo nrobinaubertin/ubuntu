@@ -60,6 +60,7 @@ apt-get install -y \
   flake8 \
   flatpak \
   git \
+  grim \
   jq \
   keepassxc \
   kitty \
@@ -82,6 +83,7 @@ apt-get install -y \
   ripgrep \
   rsync \
   shellcheck \
+  slurp \
   socat \
   sockstat \
   sqlite3 \
