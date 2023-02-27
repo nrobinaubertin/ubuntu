@@ -172,8 +172,7 @@ chown -f -R "$USERNAME" "/home/$USERNAME/.kube"
 snap alias microk8s.kubectl kubectl
 
 # pip
-cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user {}'
-ansible-lint
+cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user --upgrade {}'
 pipx
 pynvim
 python-lsp-server[all]
@@ -184,6 +183,7 @@ cat <<EOF | xargs -n1 -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force
 black
 flake8
 gita
+mypy
 pylint
 pyproject-flake8
 ranger-fm
@@ -256,7 +256,6 @@ rm -rf /tmp/aerc
 
 # Remove software that I don't want
 apt-get purge -y \
-  gnome-keyring \
   seahorse \
   yelp
 apt-get autoremove -y
