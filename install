@@ -113,21 +113,29 @@ apt-get install -y \
 # enable flathub
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
+# flatpaks
+cat <<EOF | xargs -n1 flatpak install
+com.brave.Browser
+com.valvesoftware.Steam
+EOF
+
+su "$USERNAME" sh -c 'ln -s /var/lib/flatpak/exports/bin/com.valvesoftware.Steam ~/.local/bin/steam'
+su "$USERNAME" sh -c 'ln -s /var/lib/flatpak/exports/bin/com.brave.Browser ~/.local/bin/brave'
+
 # snaps
 cat <<EOF | xargs -n1 snap install
-brave
 chromium
 firefox
 gimp
 libreoffice
 mattermost-desktop
-mgba
+multipass
 signal-desktop
 vlc
 EOF
 
-# lxd
-snap install lxd
+# fix firefox snap user.js
+ln -sf ~/.mozilla/firefox/niels/user.js snap/firefox/common/.mozilla/firefox/niels/user.js
 
 # docker
 snap install docker
