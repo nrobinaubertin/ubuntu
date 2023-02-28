@@ -59,6 +59,7 @@ apt-get install -y \
   ffmpeg \
   flake8 \
   flatpak \
+  gammastep \
   git \
   grim \
   jq \
