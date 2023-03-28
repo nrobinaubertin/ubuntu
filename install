@@ -36,6 +36,10 @@ if [ "$1" = "--update" ]; then
   if command -v flatpak >/dev/null; then
     flatpak update -y
   fi
+
+  if command -v pipx >/dev/null; then
+    pipx upgrade-all
+  fi
 fi
 
 USERNAME="$(logname)"
