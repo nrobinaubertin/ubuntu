@@ -48,6 +48,7 @@ USERNAME="$(logname)"
 apt-get update
 apt-get install -y \
   acpi \
+  age \
   build-essential \
   bzip2 \
   clang \
@@ -83,6 +84,7 @@ apt-get install -y \
   prettyping \
   python3-pip \
   python3-venv \
+  ranger \
   rclone \
   restic \
   ripgrep \
@@ -120,16 +122,15 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 
 # flatpaks
 cat <<EOF | xargs -n1 flatpak install
-com.brave.Browser
 com.valvesoftware.Steam
 EOF
 
 su "$USERNAME" sh -c 'ln -s /var/lib/flatpak/exports/bin/com.valvesoftware.Steam ~/.local/bin/steam'
-su "$USERNAME" sh -c 'ln -s /var/lib/flatpak/exports/bin/com.brave.Browser ~/.local/bin/brave'
 
 # snaps
 cat <<EOF | xargs -n1 snap install
 chromium
+element-desktop
 firefox
 gimp
 libreoffice
@@ -140,7 +141,7 @@ vlc
 EOF
 
 # fix firefox snap user.js
-ln -sf ~/.mozilla/firefox/niels/user.js snap/firefox/common/.mozilla/firefox/niels/user.js
+su "$USERNAME" sh -c 'ln -sf ~/.mozilla/firefox/niels/user.js snap/firefox/common/.mozilla/firefox/niels/user.js'
 
 # docker
 snap install docker
@@ -176,14 +177,14 @@ usermod -a -G microk8s "$USERNAME"
 chown -f -R "$USERNAME" "/home/$USERNAME/.kube"
 snap alias microk8s.kubectl kubectl
 
-# pip
+# pip (for python libraries)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user --upgrade {}'
 pipx
 pynvim
 python-lsp-server[all]
 EOF
 
-# pipx
+# pipx (for python CLI tools)
 cat <<EOF | xargs -n1 -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force {}'
 black
 flake8
@@ -191,12 +192,11 @@ gita
 mypy
 pylint
 pyproject-flake8
-ranger-fm
 tox
 yt-dlp
 EOF
 
-# npm
+# npm (for libraries and CLI tools)
 su "$USERNAME" sh -c 'npm config set prefix ~/.local'
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'npm install --force -g {}'
 dockerfile-language-server-nodejs
@@ -208,10 +208,11 @@ typescript-language-server
 yaml-language-server
 EOF
 
-# rustup
+# rustup (installs the rust toolchain)
+# following https://rustup.rs/
 su "$USERNAME" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
 
-# cargo
+# cargo (for libraries and CLI tools)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c '~/.cargo/bin/cargo install {}'
 bandwhich
 bat
