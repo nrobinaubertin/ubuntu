@@ -64,6 +64,7 @@ apt-get install -y \
   ffmpeg \
   flake8 \
   flatpak \
+  fzf \
   gammastep \
   git \
   grim \
@@ -180,6 +181,7 @@ snap alias microk8s.kubectl kubectl
 # pip (for python libraries)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user --upgrade {}'
 pipx
+pylsp-mypy
 pynvim
 python-lsp-server[all]
 EOF
@@ -190,6 +192,7 @@ black
 flake8
 gita
 mypy
+neovim-remote
 pylint
 pyproject-flake8
 tox
@@ -266,6 +269,3 @@ apt-get purge -y \
   yelp
 apt-get autoremove -y
 sudo snap remove snap-store || true
-
-# user settings
-su "$USERNAME" sh -c 'gsettings set com.ubuntu.update-notifier no-show-notifications true'
