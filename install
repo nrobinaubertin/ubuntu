@@ -122,10 +122,14 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 
 # flatpaks
 cat <<EOF | xargs -n1 flatpak install
+com.github.Anuken.Mindustry
 com.valvesoftware.Steam
+info.beyondallreason.bar
 EOF
 
 su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/com.valvesoftware.Steam ~/.local/bin/steam'
+su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/com.github.Anuken.Mindustry ~/.local/bin/mindustry'
+su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/info.beyondallreason.bar ~/.local/bin/beyondallreason'
 
 # snaps
 cat <<EOF | xargs -n1 snap install
@@ -218,6 +222,9 @@ EOF
 # following https://rustup.rs/
 su "$USERNAME" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
 
+# install some packages for kdash
+sudo apt-get install -y libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
+
 # cargo (for libraries and CLI tools)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c '~/.cargo/bin/cargo install {}'
 bat
@@ -231,7 +238,6 @@ ripgrep
 tokei
 xsv
 EOF
-
 
 # neovim
 sudo -u "$USERNAME" sh <<'EOF'
@@ -249,14 +255,3 @@ echo "properties = {bluez5.msbc-support = true}" > /etc/pipewire/media-session.d
 # (I don't use the touchpad)
 # https://askubuntu.com/questions/1235067/touchpad-stopped-working-20-04
 echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
-
-# aerc
-apt-get install -y scdoc
-sudo -u "$USERNAME" env PATH="/home/$USERNAME/.local/go/bin:$PATH" sh <<'EOF'
-mkdir -p /tmp/aerc
-cd /tmp/aerc || exit
-curl -Ls https://git.sr.ht/~rjarry/aerc/archive/0.15.2.tar.gz | tar xz --strip 1
-make
-make install PREFIX=~/.local
-rm -rf /tmp/aerc
-EOF
