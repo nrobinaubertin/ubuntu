@@ -109,8 +109,7 @@ apt-get install -y \
   w3m \
   wl-clipboard \
   xdg-desktop-portal-dev \
-  xdg-desktop-portal-gnome \
-  xdg-desktop-portal-gtk \
+  xdg-desktop-portal-wlr \
   xwayland \
   yamllint \
   yarnpkg
@@ -126,12 +125,11 @@ cat <<EOF | xargs -n1 flatpak install
 com.valvesoftware.Steam
 EOF
 
-su "$USERNAME" sh -c 'ln -s /var/lib/flatpak/exports/bin/com.valvesoftware.Steam ~/.local/bin/steam'
+su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/com.valvesoftware.Steam ~/.local/bin/steam'
 
 # snaps
 cat <<EOF | xargs -n1 snap install
 chromium
-element-desktop
 firefox
 gimp
 libreoffice
@@ -139,6 +137,7 @@ mattermost-desktop
 multipass
 signal-desktop
 vlc
+--classic go
 EOF
 
 # fix firefox snap user.js
@@ -180,10 +179,13 @@ snap alias microk8s.kubectl kubectl
 
 # pip (for python libraries)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user --upgrade {}'
+attrs
+jedi-language-server
 pipx
 pylsp-mypy
 pynvim
 python-lsp-server[all]
+ruff-lsp
 EOF
 
 # pipx (for python CLI tools)
@@ -195,6 +197,7 @@ mypy
 neovim-remote
 pylint
 pyproject-flake8
+ruff
 tox
 yt-dlp
 EOF
@@ -217,22 +220,24 @@ su "$USERNAME" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs 
 
 # cargo (for libraries and CLI tools)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c '~/.cargo/bin/cargo install {}'
-bandwhich
 bat
 du-dust
 exa
 fd-find
 git-delta
+kdash
+procs
 ripgrep
 tokei
 xsv
 EOF
 
-# neovim
-curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage --create-dirs -o /usr/local/bin/nvim
-chmod +x /usr/local/bin/nvim
 
-# age
+# neovim
+sudo -u "$USERNAME" sh <<'EOF'
+curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage --create-dirs -o ~/.local/bin/nvim
+chmod +x ~/.local/bin/nvim
+EOF
 
 # mSBC for sony wh-1000xm4
 # https://www.redpill-linpro.com/techblog/2021/05/31/better-bluetooth-headset-audio-with-msbc.html
@@ -240,32 +245,18 @@ mkdir -p /etc/pipewire/media-session.d
 echo "properties = {bluez5.msbc-support = true}" > /etc/pipewire/media-session.d/bluez-monitor.conf
 # systemctl restart pipewire
 
-# # amdgpu
-# # https://github.com/RadeonOpenCompute/ROCm/issues/1730
-# # https://amdgpu-install.readthedocs.io/en/latest/install-prereq.html
-# curl -L "https://repo.radeon.com/amdgpu-install/22.20/ubuntu/jammy/amdgpu-install_22.20.50200-1_all.deb" -o /tmp/amdgpu-install.deb
-# apt-get install -y "/tmp/amdgpu-install.deb"
-# rm -rf "/tmp/amdgpu-install.deb"
-# # https://askubuntu.com/a/1424178/1624582
-# amdgpu-install --usecase=opencl,graphics -y
-
 # handle trackpad issues when awakening from S3 sleep
 # (I don't use the touchpad)
 # https://askubuntu.com/questions/1235067/touchpad-stopped-working-20-04
 echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
 
 # aerc
-apt install -y golang scdoc
+apt-get install -y scdoc
+sudo -u "$USERNAME" env PATH="/home/$USERNAME/.local/go/bin:$PATH" sh <<'EOF'
 mkdir -p /tmp/aerc
 cd /tmp/aerc || exit
-curl -Ls https://git.sr.ht/~rjarry/aerc/archive/0.14.0.tar.gz | tar xz --strip 1
+curl -Ls https://git.sr.ht/~rjarry/aerc/archive/0.15.2.tar.gz | tar xz --strip 1
 make
-make install
+make install PREFIX=~/.local
 rm -rf /tmp/aerc
-
-# Remove software that I don't want
-apt-get purge -y \
-  seahorse \
-  yelp
-apt-get autoremove -y
-sudo snap remove snap-store || true
+EOF
