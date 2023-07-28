@@ -121,7 +121,7 @@ apt-get install -y \
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # flatpaks
-cat <<EOF | xargs -n1 flatpak install
+cat <<EOF | xargs -n1 flatpak install -y
 com.github.Anuken.Mindustry
 com.valvesoftware.Steam
 info.beyondallreason.bar
@@ -155,8 +155,7 @@ snap disable docker
 snap enable docker
 
 # check if the snap partition is using zfs, change the storage-driver accordingly
-if df -hT | awk '/\/var\/snap/ {print $2}' | grep zfs >/dev/null
-then
+if df -hT | awk '/\/var\/snap/ {print $2}' | grep zfs >/dev/null; then
 cat <<EOF > /var/snap/docker/current/config/daemon.json
 {
   "storage-driver": "zfs",
