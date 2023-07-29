@@ -82,8 +82,11 @@ apt-get install -y \
   patchelf \
   php \
   php-codesniffer \
+  pipx \
   prettyping \
+  python3-attr \
   python3-pip \
+  python3-pynvim \
   python3-venv \
   ranger \
   rclone \
@@ -180,27 +183,18 @@ usermod -a -G microk8s "$USERNAME"
 chown -f -R "$USERNAME" "/home/$USERNAME/.kube"
 snap alias microk8s.kubectl kubectl
 
-# pip (for python libraries)
-cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'pip install --user --upgrade {}'
-attrs
-jedi-language-server
-pipx
-pylsp-mypy
-pynvim
-python-lsp-server[all]
-ruff-lsp
-EOF
-
 # pipx (for python CLI tools)
 cat <<EOF | xargs -n1 -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force {}'
 black
 flake8
 gita
+jedi-language-server
 mypy
 neovim-remote
 pylint
 pyproject-flake8
 ruff
+ruff-lsp
 tox
 yt-dlp
 EOF
