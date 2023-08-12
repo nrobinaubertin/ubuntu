@@ -44,6 +44,9 @@ fi
 
 USERNAME="$(logname)"
 
+# make some common directories
+su "$USERNAME" sh -c 'mkdir -p ~/.local/bin'
+
 # apt packages
 apt-get update
 apt-get install -y \
@@ -248,3 +251,21 @@ echo "properties = {bluez5.msbc-support = true}" > /etc/pipewire/media-session.d
 # (I don't use the touchpad)
 # https://askubuntu.com/questions/1235067/touchpad-stopped-working-20-04
 echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
+
+# terraform-ls
+sudo -u "$USERNAME" sh <<'EOF'
+VERSION="0.31.4"
+curl -Ls "https://releases.hashicorp.com/terraform-ls/${VERSION}/terraform-ls_${VERSION}_linux_amd64.zip" -o ~/terraform-ls.zip
+unzip ~/terraform-ls.zip -d ~/
+mv ~/terraform-ls ~/.local/bin/
+rm ~/terraform-ls.zip
+EOF
+
+# tflint
+sudo -u "$USERNAME" sh <<'EOF'
+VERSION="0.47.0"
+curl -Ls "https://github.com/terraform-linters/tflint/releases/download/v${VERSION}/tflint_linux_amd64.zip" -o ~/tflint.zip
+unzip ~/tflint.zip -d ~/
+mv ~/tflint ~/.local/bin/
+rm ~/tflint.zip
+EOF
