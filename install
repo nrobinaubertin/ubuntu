@@ -71,10 +71,12 @@ apt-get install -y \
   gammastep \
   git \
   grim \
+  iproute2 \
   jq \
   keepassxc \
   kitty \
   lftp \
+  libfontconfig-dev \
   lua-check \
   mariadb-client \
   mpv \
@@ -128,26 +130,22 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 
 # flatpaks
 cat <<EOF | xargs -n1 flatpak install -y
-com.github.Anuken.Mindustry
 com.valvesoftware.Steam
-info.beyondallreason.bar
+org.localsend.localsend_app
 EOF
 
 su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/com.valvesoftware.Steam ~/.local/bin/steam'
-su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/com.github.Anuken.Mindustry ~/.local/bin/mindustry'
-su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/info.beyondallreason.bar ~/.local/bin/beyondallreason'
+su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/org.localsend.localsend_app ~/.local/bin/localsend'
 
 # snaps
 cat <<EOF | xargs -n1 snap install
 chromium
+--classic go
+-- classic gopls
 firefox
-gimp
-libreoffice
-mattermost-desktop
 multipass
 signal-desktop
 vlc
---classic go
 EOF
 
 # fix firefox snap user.js
@@ -176,24 +174,15 @@ snap install lxd
 # bad interaction between lxd and docker snaps needs the following workaround:
 iptables-legacy -I DOCKER-USER -j ACCEPT
 
-# juju
-snap install --classic juju
-
-# microk8s
-snap install --classic microk8s
-mkdir -p "/home/$USERNAME/.kube"
-usermod -a -G microk8s "$USERNAME"
-chown -f -R "$USERNAME" "/home/$USERNAME/.kube"
-snap alias microk8s.kubectl kubectl
-
 # pipx (for python CLI tools)
-cat <<EOF | xargs -n1 -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force {}'
+cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force {}'
 black
 flake8
 gita
 jedi-language-server
 mypy
 neovim-remote
+poetry
 pylint
 pyproject-flake8
 ruff
@@ -218,21 +207,18 @@ EOF
 # following https://rustup.rs/
 su "$USERNAME" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default -y --no-modify-path'
 
-# install some packages for kdash
-sudo apt-get install -y libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
-
 # cargo (for libraries and CLI tools)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c '~/.cargo/bin/cargo install {}'
+alacritty
 bat
 du-dust
 exa
 fd-find
 git-delta
-kdash
 procs
-ripgrep
 tokei
 xsv
+zellij
 EOF
 
 # neovim
@@ -254,7 +240,7 @@ echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
 
 # terraform-ls
 sudo -u "$USERNAME" sh <<'EOF'
-VERSION="0.31.4"
+VERSION="0.32.7"
 curl -Ls "https://releases.hashicorp.com/terraform-ls/${VERSION}/terraform-ls_${VERSION}_linux_amd64.zip" -o ~/terraform-ls.zip
 unzip ~/terraform-ls.zip -d ~/
 mv ~/terraform-ls ~/.local/bin/
@@ -263,7 +249,7 @@ EOF
 
 # tflint
 sudo -u "$USERNAME" sh <<'EOF'
-VERSION="0.47.0"
+VERSION="0.50.3"
 curl -Ls "https://github.com/terraform-linters/tflint/releases/download/v${VERSION}/tflint_linux_amd64.zip" -o ~/tflint.zip
 unzip ~/tflint.zip -d ~/
 mv ~/tflint ~/.local/bin/
