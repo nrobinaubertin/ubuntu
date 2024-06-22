@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# Used on 22.04.1 LTS (Jammy Jellyfish)
+# Used on 22.04 LTS (Jammy Jellyfish)
+# Used on 24.04 LTS (Noble Numbat)
 # Meant to be used with a sudoed user (it will setup things globally and for the user)
 
 set -x
@@ -45,13 +46,19 @@ fi
 USERNAME="$(logname)"
 
 # make some common directories
-su "$USERNAME" sh -c 'mkdir -p ~/.local/bin'
+cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'mkdir -p {}'
+~/.local/bin
+~/data
+~/git
+~/projects
+EOF
 
 # apt packages
 apt-get update
 apt-get install -y \
   acpi \
   age \
+  bluez \
   build-essential \
   bzip2 \
   clang \
@@ -59,7 +66,6 @@ apt-get install -y \
   clang-tools \
   cppcheck \
   curl \
-  deluge \
   dmenu \
   exfat-fuse \
   fd-find \
@@ -80,6 +86,7 @@ apt-get install -y \
   lua-check \
   mariadb-client \
   mpv \
+  neovim \
   net-tools \
   network-manager \
   nodejs \
@@ -89,6 +96,7 @@ apt-get install -y \
   php-codesniffer \
   pipx \
   prettyping \
+  pulseaudio-utils \
   python3-attr \
   python3-pip \
   python3-pynvim \
@@ -110,7 +118,6 @@ apt-get install -y \
   sysstat \
   tmux \
   tree \
-  universal-ctags \
   unzip \
   urlscan \
   vim \
@@ -121,9 +128,6 @@ apt-get install -y \
   xwayland \
   yamllint \
   yarnpkg
-
-# packages under evaluation
-# libwayland-egl1
 
 # enable flathub
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -157,16 +161,6 @@ addgroup --system docker
 adduser "$USERNAME" docker
 snap disable docker
 snap enable docker
-
-# check if the snap partition is using zfs, change the storage-driver accordingly
-if df -hT | awk '/\/var\/snap/ {print $2}' | grep zfs >/dev/null; then
-cat <<EOF > /var/snap/docker/current/config/daemon.json
-{
-  "storage-driver": "zfs",
-  "log-level": "error"
-}
-EOF
-fi
 
 # lxd
 snap install lxd
@@ -219,12 +213,6 @@ procs
 tokei
 xsv
 zellij
-EOF
-
-# neovim
-sudo -u "$USERNAME" sh <<'EOF'
-curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage --create-dirs -o ~/.local/bin/nvim
-chmod +x ~/.local/bin/nvim
 EOF
 
 # mSBC for sony wh-1000xm4
