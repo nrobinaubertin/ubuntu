@@ -58,8 +58,8 @@ apt-get update
 apt-get install -y \
   acpi \
   age \
-  bluez \
   build-essential \
+  btop \
   bzip2 \
   clang \
   clang-tidy \
@@ -78,14 +78,17 @@ apt-get install -y \
   git \
   grim \
   iproute2 \
+  isync \
   jq \
   keepassxc \
-  kitty \
   lftp \
   libfontconfig-dev \
+  libnss3-tools \
   lua-check \
   mariadb-client \
+  mkcert \
   mpv \
+  neomutt \
   neovim \
   net-tools \
   network-manager \
@@ -96,7 +99,6 @@ apt-get install -y \
   php-codesniffer \
   pipx \
   prettyping \
-  pulseaudio-utils \
   python3-attr \
   python3-pip \
   python3-pynvim \
@@ -126,8 +128,13 @@ apt-get install -y \
   xdg-desktop-portal-dev \
   xdg-desktop-portal-wlr \
   xwayland \
-  yamllint \
-  yarnpkg
+  yamllint
+
+# Disable some services
+# We disable network services so that NetworkManager can do it instead
+systemctl disable systemd-networkd.socket
+systemctl disable systemd-networkd
+systemctl disable wpa_supplicant
 
 # enable flathub
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -144,12 +151,16 @@ su "$USERNAME" sh -c 'ln -sf /var/lib/flatpak/exports/bin/org.localsend.localsen
 # snaps
 cat <<EOF | xargs -n1 snap install
 chromium
---classic go
--- classic gopls
 firefox
 multipass
 signal-desktop
 vlc
+EOF
+
+# classic snaps
+cat <<EOF | xargs -n1 snap install --classic
+go
+gopls
 EOF
 
 # fix firefox snap user.js
@@ -179,6 +190,7 @@ neovim-remote
 poetry
 pylint
 pyproject-flake8
+python-lsp-server
 ruff
 ruff-lsp
 tox
@@ -215,11 +227,21 @@ xsv
 zellij
 EOF
 
+# bluetooth utils
+apt-get install -y \
+  bluez \
+  pipewire-audio \
+  pipewire-pulse \
+  pulseaudio-utils \
+  wireplumber
+
+# systemctl enable wireplumber.service
+
 # mSBC for sony wh-1000xm4
 # https://www.redpill-linpro.com/techblog/2021/05/31/better-bluetooth-headset-audio-with-msbc.html
+# https://ubuntuhandbook.org/index.php/2022/04/pipewire-replace-pulseaudio-ubuntu-2204/
 mkdir -p /etc/pipewire/media-session.d
 echo "properties = {bluez5.msbc-support = true}" > /etc/pipewire/media-session.d/bluez-monitor.conf
-# systemctl restart pipewire
 
 # handle trackpad issues when awakening from S3 sleep
 # (I don't use the touchpad)
@@ -228,7 +250,7 @@ echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
 
 # terraform-ls
 sudo -u "$USERNAME" sh <<'EOF'
-VERSION="0.32.7"
+VERSION="0.33.2"
 curl -Ls "https://releases.hashicorp.com/terraform-ls/${VERSION}/terraform-ls_${VERSION}_linux_amd64.zip" -o ~/terraform-ls.zip
 unzip ~/terraform-ls.zip -d ~/
 mv ~/terraform-ls ~/.local/bin/
@@ -237,9 +259,12 @@ EOF
 
 # tflint
 sudo -u "$USERNAME" sh <<'EOF'
-VERSION="0.50.3"
+VERSION="0.51.1"
 curl -Ls "https://github.com/terraform-linters/tflint/releases/download/v${VERSION}/tflint_linux_amd64.zip" -o ~/tflint.zip
 unzip ~/tflint.zip -d ~/
 mv ~/tflint ~/.local/bin/
 rm ~/tflint.zip
 EOF
+
+# Set default editor for root
+update-alternatives --set editor /usr/bin/nvim
