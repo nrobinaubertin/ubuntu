@@ -58,20 +58,15 @@ apt-get update
 apt-get install -y \
   acpi \
   age \
-  build-essential \
   btop \
+  build-essential \
   bzip2 \
-  clang \
-  clang-tidy \
-  clang-tools \
-  cppcheck \
   curl \
   dmenu \
   exfat-fuse \
   fd-find \
   feh \
   ffmpeg \
-  flake8 \
   flatpak \
   fzf \
   gammastep \
@@ -84,7 +79,6 @@ apt-get install -y \
   lftp \
   libfontconfig-dev \
   libnss3-tools \
-  lua-check \
   mariadb-client \
   mkcert \
   mpv \
@@ -92,11 +86,10 @@ apt-get install -y \
   neovim \
   net-tools \
   network-manager \
+  network-manager-openvpn \
   nodejs \
   npm \
   patchelf \
-  php \
-  php-codesniffer \
   pipx \
   prettyping \
   python3-attr \
@@ -108,7 +101,6 @@ apt-get install -y \
   restic \
   ripgrep \
   rsync \
-  shellcheck \
   slurp \
   socat \
   sockstat \
@@ -119,22 +111,32 @@ apt-get install -y \
   syncthing \
   sysstat \
   tmux \
+  tox \
   tree \
   unzip \
   urlscan \
   vim \
   w3m \
   wl-clipboard \
-  xdg-desktop-portal-dev \
-  xdg-desktop-portal-wlr \
   xwayland \
   yamllint
 
-# Disable some services
+
+# xdg-desktop-portal are necessary for screensharing and file picking in firefox
+# https://wiki.archlinux.org/title/XDG_Desktop_Portal
+# Set widget.use-xdg-desktop-portal.file-picker" from "2" to "0" in firefox about:config
+# https://support.mozilla.org/en-US/questions/1375244
+apt-get install -y \
+  xdg-desktop-portal \
+  xdg-desktop-portal-gtk \
+  xdg-desktop-portal-wlr
+
+# Manage some services
 # We disable network services so that NetworkManager can do it instead
 systemctl disable systemd-networkd.socket
 systemctl disable systemd-networkd
-systemctl disable wpa_supplicant
+systemctl mask systemd-networkd
+systemctl enable NetworkManager
 
 # enable flathub
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -181,32 +183,15 @@ iptables-legacy -I DOCKER-USER -j ACCEPT
 
 # pipx (for python CLI tools)
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force {}'
-black
-flake8
 gita
-jedi-language-server
-mypy
 neovim-remote
 poetry
-pylint
-pyproject-flake8
-python-lsp-server
-ruff
-ruff-lsp
-tox
 yt-dlp
 EOF
 
 # npm (for libraries and CLI tools)
 su "$USERNAME" sh -c 'npm config set prefix ~/.local'
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'npm install --force -g {}'
-dockerfile-language-server-nodejs
-eslint
-markdownlint-cli
-pyright
-typescript
-typescript-language-server
-yaml-language-server
 EOF
 
 # rustup (installs the rust toolchain)
@@ -219,7 +204,6 @@ alacritty
 bat
 du-dust
 exa
-fd-find
 git-delta
 procs
 tokei
@@ -247,24 +231,6 @@ echo "properties = {bluez5.msbc-support = true}" > /etc/pipewire/media-session.d
 # (I don't use the touchpad)
 # https://askubuntu.com/questions/1235067/touchpad-stopped-working-20-04
 echo "options psmouse proto=imps" > /etc/modprobe.d/psmouse.conf
-
-# terraform-ls
-sudo -u "$USERNAME" sh <<'EOF'
-VERSION="0.33.2"
-curl -Ls "https://releases.hashicorp.com/terraform-ls/${VERSION}/terraform-ls_${VERSION}_linux_amd64.zip" -o ~/terraform-ls.zip
-unzip ~/terraform-ls.zip -d ~/
-mv ~/terraform-ls ~/.local/bin/
-rm ~/terraform-ls.zip
-EOF
-
-# tflint
-sudo -u "$USERNAME" sh <<'EOF'
-VERSION="0.51.1"
-curl -Ls "https://github.com/terraform-linters/tflint/releases/download/v${VERSION}/tflint_linux_amd64.zip" -o ~/tflint.zip
-unzip ~/tflint.zip -d ~/
-mv ~/tflint ~/.local/bin/
-rm ~/tflint.zip
-EOF
 
 # Set default editor for root
 update-alternatives --set editor /usr/bin/nvim
