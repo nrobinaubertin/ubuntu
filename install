@@ -64,6 +64,7 @@ apt-get install -y \
   curl \
   dmenu \
   exfat-fuse \
+  eza \
   fd-find \
   feh \
   ffmpeg \
@@ -71,6 +72,7 @@ apt-get install -y \
   fzf \
   gammastep \
   git \
+  git-delta \
   grim \
   iproute2 \
   isync \
@@ -202,9 +204,6 @@ su "$USERNAME" sh -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs 
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c '~/.cargo/bin/cargo install {}'
 alacritty
 bat
-du-dust
-exa
-git-delta
 procs
 tokei
 xsv
