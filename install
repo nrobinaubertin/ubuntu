@@ -123,16 +123,6 @@ apt-get install -y \
   xwayland \
   yamllint
 
-
-# xdg-desktop-portal are necessary for screensharing and file picking in firefox
-# https://wiki.archlinux.org/title/XDG_Desktop_Portal
-# Set widget.use-xdg-desktop-portal.file-picker" from "2" to "0" in firefox about:config
-# https://support.mozilla.org/en-US/questions/1375244
-apt-get install -y \
-  xdg-desktop-portal \
-  xdg-desktop-portal-gtk \
-  xdg-desktop-portal-wlr
-
 # Manage some services
 # We disable network services so that NetworkManager can do it instead
 systemctl disable systemd-networkd.socket
@@ -166,6 +156,18 @@ cat <<EOF | xargs -n1 snap install --classic
 go
 gopls
 EOF
+
+# xdg-desktop-portal are necessary for screensharing and file picking in firefox
+# https://wiki.archlinux.org/title/XDG_Desktop_Portal
+# Set widget.use-xdg-desktop-portal.file-picker" from "2" to "0" in firefox about:config
+# https://support.mozilla.org/en-US/questions/1375244
+apt-get install -y \
+  xdg-desktop-portal \
+  xdg-desktop-portal-gtk \
+  xdg-desktop-portal-wlr
+
+# choose firefox snap as the default browser
+su "$USERNAME" sh -c 'xdg-settings set default-web-browser firefox_firefox.desktop'
 
 # fix firefox snap user.js
 su "$USERNAME" sh -c 'ln -sf ~/.mozilla/firefox/niels/user.js snap/firefox/common/.mozilla/firefox/niels/user.js'
