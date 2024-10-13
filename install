@@ -189,14 +189,14 @@ iptables-legacy -I DOCKER-USER -j ACCEPT
 cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'python3 -m pipx install --force {}'
 gita
 neovim-remote
-poetry
 yt-dlp
 EOF
 
-# npm (for libraries and CLI tools)
-su "$USERNAME" sh -c 'npm config set prefix ~/.local'
-cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'npm install --force -g {}'
-EOF
+# # npm (for libraries and CLI tools)
+# su "$USERNAME" sh -c 'npm config set prefix ~/.local'
+# cat <<EOF | xargs -I{} su "$USERNAME" sh -c 'npm install --force -g {}'
+# @mermaid-js/mermaid-cli
+# EOF
 
 # rustup (installs the rust toolchain)
 # following https://rustup.rs/
